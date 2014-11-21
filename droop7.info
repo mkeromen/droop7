@@ -1,0 +1,4 @@
+name = "Droop 7"
+description = "Module Core pour le projet xxx"
+core = 7.x
+package = "Absolunet"

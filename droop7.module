@@ -1,0 +1,234 @@
+<?php
+module_load_include('php', 'asstsas_core', 'module_loader');
+module_load_include('php', 'asstsas_core', 'app/config');
+module_load_include('php', 'asstsas_core', 'app/routing/routes');
+
+
+/**
+ * Implements hook_init()
+ */
+function droop7_init() {
+
+    require_once __DIR__ . '/vendor/symfony/class-loader/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+    if(_is_apc_cache_available()) {
+        require_once __DIR__ . '/vendor/symfony/class-loader/Symfony/Component/ClassLoader/ApcUniversalClassLoader.php';
+        $loader = new \Symfony\Component\ClassLoader\ApcUniversalClassLoader('apc.prefix.');
+    } else {
+        $loader = new \Symfony\Component\ClassLoader\UniversalClassLoader();
+    }
+
+    $symfony_components_path    = __DIR__ . '/vendor/symfony/';
+    $loader->registerNamespaces(array(
+        'Absolunet' => __DIR__ . '/src',
+        'Asstsas'   => __DIR__ . '/src',
+        'Symfony'   => array(
+            $symfony_components_path . '/dependency-injection',
+            $symfony_components_path . '/config',
+            $symfony_components_path . '/filesystem'
+        )
+    ));
+
+    $loader->register();
+    _set_service_container();
+}
+
+/**
+ * Implements hook_mail()
+ * @param $key
+ * @param $message
+ * @param $params
+ */
+function droop7_core_mail($key, &$message, $params) { }
+
+/**
+ * Implements hook_form_alter()
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ */
+function droop7_form_alter(&$form, &$form_state, $form_id) { }
+
+/**
+ * Implements hook_block_info()
+ * @return mixed
+ */
+function droop7_block_info() {
+
+    /*$blockAssembler = new Droop7\Core\BlockAssembler();
+    return $blockAssembler
+                        ->add()
+                        ->get();*/
+
+    /*$publication    = _get_service('core_services.publication');
+    $pdsb           = _get_service('core_services.pdsb');
+    $actualite      = _get_service('core_services.actualites');
+    $formation      = _get_service('core_services.formation');
+    $carousel       = _get_service('core_services.carousel');
+    $revue          = _get_service('core_services.revue');
+    $social         = _get_service('core_services.social');
+
+    $back_button    = _get_class('back');
+    $print          = _get_class('print');
+
+    return array_merge(
+        $actualite->getBlocks(),
+        $publication->getBlocks(),
+        $pdsb->getBlocks(),
+        $print->getBlocks(array('region' => 'nav')),
+        $formation->getBlocks(),
+        $back_button->getBlocks(),
+        $carousel->getBlocks(),
+        $revue->getBlocks(),
+        $social->getBlocks()
+    );*/
+}
+
+
+/**
+ * Implements hook_block_info_alter()
+ * @param $blocks
+ * @param $theme
+ *
+ */
+function droop7_block_info_alter(&$blocks, $theme) {
+
+    // Implements a foreach loop for service;
+
+    /*$configs            = array('current_theme' => 'asstsas', 'current_module' => basename(__FILE__, '.module'));
+
+    $actualite      = _get_service('core_services.actualites');
+    $publication    = _get_service('core_services.publication');
+    $pdsb           = _get_service('core_services.pdsb');
+    $formation      = _get_service('core_services.formation');
+    $carousel       = _get_service('core_services.carousel');
+    $revue          = _get_service('core_services.revue');
+    $social         = _get_service('core_services.social');
+
+
+    $actualite->updateBlocks($blocks, $theme, $configs);
+    $publication->updateBlocks($blocks, $theme, $configs);
+    $pdsb->updateBlocks($blocks, $theme, $configs);
+    $formation->updateBlocks($blocks, $theme, $configs);
+    $carousel->updateBlocks($blocks, $theme, $configs);
+    $revue->updateBlocks($blocks, $theme, $configs);
+    $social->updateBlocks($blocks, $theme, $configs);
+
+
+    $back_button        = _get_class('back');
+    $back_button->updateBlocks($blocks, $theme, $configs);
+
+    $print_module       = _get_class('print');
+    $print_module->updateBlocks($blocks, $theme, $configs);*/
+}
+
+/**
+ * Implements hook_block_view()
+ * @param string $delta
+ * @return array
+ */
+function droop7_block_view($delta = '') {
+
+    global $container;
+    $exploded_delta = explode('_', $delta);
+    $base_key       = $exploded_delta[1];
+    $container_key  = 'services.' . $base_key;
+
+    $service_ids    = $container->getServiceIds();
+    $array_key      = array_search($container_key, $service_ids);
+
+    if($array_key !== FALSE) {
+        $find_key = $service_ids[$array_key];
+        return $container->get($find_key)->buildBlockViews($delta);
+    }
+
+}
+
+
+/**
+ * Implements hook_theme()
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return array
+ */
+function droop7_theme() {
+
+    /*$src_path        = drupal_get_path('module', 'asstsas_core') . '/src';
+
+    $shopping        = _get_class('shopping');
+    $page            = _get_class('page');
+    $print           = _get_class('print');
+    $search          = _get_class('search');
+
+    $actualite       = _get_service('core_services.actualites');
+    $publication     = _get_service('core_services.publication');
+    $pdsb            = _get_service('core_services.pdsb');
+    $formation       = _get_service('core_services.formation');
+    $carousel        = _get_service('core_services.carousel');
+    $revue           = _get_service('core_services.revue');
+    $social          = _get_service('core_services.social');
+
+    return array_merge(
+        $publication->getViews($src_path),
+        $social->getViews($src_path),
+        $pdsb->getViews($src_path),
+        $formation->getViews($src_path),
+        $page->getViews($src_path),
+        $shopping->getViews($src_path),
+        $print->getViews($src_path),
+        $actualite->getViews($src_path),
+        $carousel->getViews($src_path),
+        $search->getViews($src_path),
+        $revue->getViews($src_path)
+    );*/
+}
+
+
+/**
+ * Implements hook_menu()
+ * @return mixed
+ */
+function droop7_menu() {
+
+    /*$ajax_routes            = ajax_routes();
+    $shopping_cart_routes   = shopping_cart_routes();
+    $search_routes          = search_routes();
+    $webform_routes         = webform_routes();
+
+    return array_merge($ajax_routes, $shopping_cart_routes, $search_routes, $webform_routes);*/
+}
+
+/**
+ * Implements template_preprocess_html
+ * @param $variables
+ */
+function mytheme_preprocess_html(&$variables) { }
+
+/**
+ * Implements template_preprocess_page()
+ * @param $variables
+ */
+function mytheme_preprocess_page(&$variables) { }
+
+
+/**
+ * Implements template_preprocess_node()
+ *
+ */
+function mytheme_preprocess_node(&$variables) {
+
+    $data = array();
+    $delegate_data = '_get_data_node_' . $variables['type'];
+    if(function_exists($delegate_data)) {
+        $data = $delegate_data($variables);
+    }
+
+    $controller = _get_service_controller($variables['type']);
+    if($controller) {
+        $controller->preprocessNodeAction($variables, $data);
+    }
+}
+
+?>

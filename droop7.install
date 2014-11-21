@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * Implements hook_install()
+ */
+function asstsas_core_install() {
+
+    variable_set('mail_system', array(
+        'default-system' => 'DefaultMailSystem',
+        'asstsas_core' => 'AsstsasMailSystem'
+    ));
+}
+
+/**
+ * Implements hook_uninstall()
+ */
+function asstsas_core_uninstall() {
+
+    $mail_system = variable_get('mail_system');
+    unset($mail_system['asstsas_core']);
+    variable_set('mail_system', $mail_system);
+
+}
+?>

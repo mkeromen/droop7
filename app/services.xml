@@ -1,0 +1,136 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="core.cache" class="Absolunet\Core\DI\CacheServiceFactory" />
+
+        <service id="core_services.taxonomyservice" class="Absolunet\Service\Taxonomy">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.requestservice" class="Absolunet\Service\Request" >
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.menuservice" class="Absolunet\Service\Menu">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.publicationrepository" class="Asstsas\Module\Publication\PublicationRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.pdsbrepository" class="Asstsas\Module\Pdsb\PdsbRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.formationrepository" class="Asstsas\Module\Formation\FormationRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.shoppingRepository" class="Asstsas\Module\Shopping\ShoppingRepository" />
+
+        <service id="core_services.actualitesrepository" class="Asstsas\Module\Actualites\ActualitesRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.carouselrepository" class="Asstsas\Module\Carousel\CarouselRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.revueRepository" class="Asstsas\Module\Revue\RevueRepository">
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.item_caroussel_ctl" class="Asstsas\Module\Carousel\CarouselController">
+            <argument type="service" id="core_services.carouselRepository" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.carousel" class="Asstsas\Module\Carousel\CarouselModule" >
+            <argument type="service" id="core_services.item_caroussel_ctl" />
+            <tag name="apc.cache" />
+        </service>
+
+
+        <service id="core_services.publication" class="Asstsas\Module\Publication\PublicationModule">
+            <argument type="service" id="core_services.taxonomyService" />
+            <argument type="service" id="core_services.requestService" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.publication_ctl" class="Asstsas\Module\Publication\PublicationController">
+            <argument type="service" id="core_services.publicationRepository" />
+            <argument type="service" id="core_services.taxonomyService" />
+            <argument type="service" id="core_services.requestService" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.pdsb_ctl" class="Asstsas\Module\Pdsb\PdsbController">
+            <argument type="service" id="core_services.pdsbRepository" />
+            <argument type="service" id="core_services.taxonomyService" />
+            <argument type="service" id="core_services.requestService" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.pdsb" class="Asstsas\Module\Pdsb\PdsbModule">
+            <argument type="service" id="core_services.taxonomyService" />
+            <argument type="service" id="core_services.pdsb_ctl" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.formation" class="Asstsas\Module\Formation\FormationModule">
+            <argument type="service" id="core_services.requestService" />
+            <argument type="service" id="core_services.formation_ctl" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.formation_ctl" class="Asstsas\Module\Formation\FormationController">
+            <argument type="service" id="core_services.formationRepository" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.page_contenu_ctl" class="Asstsas\Module\Page\PageController">
+            <argument type="service" id="core_services.menuService" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.shopping_ctl" class="Asstsas\Module\Shopping\ShoppingController">
+            <argument type="service" id="core_services.shoppingRepository" />
+        </service>
+
+        <service id="core_services.actualites_ctl" class="Asstsas\Module\Actualites\ActualitesController">
+            <argument type="service" id="core_services.actualitesRepository" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.actualites" class="Asstsas\Module\Actualites\ActualitesModule">
+            <argument type="service" id="core_services.requestService" />
+            <argument type="service" id="core_services.actualites_ctl" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.revue_ctl" class="Asstsas\Module\Revue\RevueController">
+            <argument type="service" id="core_services.revueRepository" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.revue" class="Asstsas\Module\Revue\RevueModule">
+            <argument type="service" id="core_services.taxonomyService" />
+            <argument type="service" id="core_services.requestService" />
+            <argument type="service" id="core_services.revue_ctl" />
+            <tag name="apc.cache" />
+        </service>
+
+        <service id="core_services.social" class="Asstsas\Module\Social\SocialModule">
+            <argument type="service" id="core_services.requestService" />
+            <tag name="apc.cache" />
+        </service>
+
+        <!-- WEBFORM -->
+        <service id="core_services.webform_ctl" class="Asstsas\Webform\WebformController" />
+    </services>
+
+</container>
+

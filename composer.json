@@ -1,0 +1,7 @@
+{
+    "require": {
+        "symfony/class-loader": "2.6.*@dev",
+        "symfony/dependency-injection": "2.6.*@dev",
+        "symfony/config": "2.6.*@dev"
+    }
+}
