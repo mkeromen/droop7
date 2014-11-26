@@ -1,4 +1,4 @@
 name = "Droop 7"
-description = "Module Core pour le projet xxx"
+description = "Organize your development with Drupal 7"
 core = 7.x
 package = "Absolunet"

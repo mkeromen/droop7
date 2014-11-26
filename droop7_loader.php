@@ -4,20 +4,20 @@
  * _set_service_container is used for set global container
  * @return \Symfony\Component\DependencyInjection\ContainerBuilder
  */
-function _set_service_container() {
+function droop7_start_service_container($configurations_path, $alias = 'services') {
 
-    $debug_mode = true;
+    $debug_mode     = variable_get('droop7_env');
+    $file           = __DIR__ . '/cache/container.php';
 
-    $file = __DIR__ . '/cache/container.php';
     $container_config_cache = new \Symfony\Component\Config\ConfigCache($file, $debug_mode);
 
     if(!$container_config_cache->isFresh()) {
 
         $container_builder  = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-        $extension          = new \Absolunet\Core\DI\CoreExtension();
+        $extension          = new \Droop7\Core\DI\CoreExtension($configurations_path);
         $container_builder->registerExtension($extension);
         $container_builder->loadFromExtension($extension->getAlias());
-        $container_builder->addCompilerPass(new \Absolunet\Core\DI\CacheCompilerPass());
+        $container_builder->addCompilerPass(new \Droop7\Core\DI\CacheCompilerPass());
 
         $container_builder->compile();
 
@@ -37,9 +37,7 @@ function _set_service_container() {
 function _is_apc_cache_available() {
 
     if(extension_loaded('apc') && ini_get('apc.enabled')) {
-        global $apcFlag;
-        $domain = $_SERVER['SERVER_NAME'];
-        return $apcFlag[$domain];
+        return !variable_get('droop7_env');
     }
 
     return false;
@@ -55,7 +53,7 @@ function _get_service($key) {
 
     global $container;
 
-    if(is_apc_cache_available()) {
+    if(_is_apc_cache_available()) {
         $service = $container->get('core.cache')->getCachableServiceByID($key);
         if($service) {
             apc_add($key, $service);
@@ -95,25 +93,4 @@ function _get_class_callBack($class_key, $key) {
         return $classes_module[$class_key][$key];
     }
     return null;
-}
-
-/**
- * @param $type
- * @return \Absolunet\Core\IProcess|null
- */
-/*function _get_service_controller($type) {
-
-    global $container;
-
-    $controller_key    = 'core_services' . '.' . $type . '_ctl';
-    if($container->has($controller_key)) {
-
-        $service = _get_service($controller_key);
-        if($service instanceof \Absolunet\Core\IProcess) {
-            return $service;
-        }
-    }
-
-    return null;
 }*/
-

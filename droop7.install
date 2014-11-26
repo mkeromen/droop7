@@ -3,22 +3,21 @@
 /**
  * Implements hook_install()
  */
-function asstsas_core_install() {
+function droop7_install() {
 
-    variable_set('mail_system', array(
-        'default-system' => 'DefaultMailSystem',
-        'asstsas_core' => 'AsstsasMailSystem'
-    ));
+    db_update('system')
+        ->fields(array('weight' => '-1'))
+        ->condition('name', 'droop7', '=')
+        ->execute();
+
+    variable_set('droop7_env', true);
 }
 
 /**
  * Implements hook_uninstall()
  */
-function asstsas_core_uninstall() {
+function droop7_uninstall() {
 
-    $mail_system = variable_get('mail_system');
-    unset($mail_system['asstsas_core']);
-    variable_set('mail_system', $mail_system);
-
+    variable_del('droop7_env');
 }
 ?>

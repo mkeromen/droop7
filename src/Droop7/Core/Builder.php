@@ -8,8 +8,10 @@ interface Builder {
 
     function buildBlocks();
 
-    function alterBuildBlocks();
+    function alterBuildBlocks(&$blocks, $theme);
 
-    function buildBlockViews();
+    function buildBlockViews($delta);
+
+    function buildRoutes();
 
 }

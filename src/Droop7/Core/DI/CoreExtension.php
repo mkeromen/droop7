@@ -9,6 +9,17 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
 class CoreExtension implements ExtensionInterface {
 
+    private $servicePath;
+
+    private $alias;
+
+
+    public function __construct($servicePath, $alias = 'services')
+    {
+        $this->servicePath  = $servicePath;
+        $this->alias        = $alias;
+    }
+
     /**
      * Loads a specific configuration.
      *
@@ -23,9 +34,10 @@ class CoreExtension implements ExtensionInterface {
 
         $loader = new XmlFileLoader(
             $container,
-            new FileLocator(__DIR__ . '/../../../../app')
+            new FileLocator($this->servicePath)
         );
 
+        $loader->load('config.xml');
         $loader->load('services.xml');
     }
 
