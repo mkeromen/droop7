@@ -1,6 +1,4 @@
 <?php
-module_load_include('php', 'droop7', 'droop7_loader');
-
 /**
  * Implements hook_init()
  * Bootstrap droop 7
@@ -11,7 +9,7 @@ function droop7_init() {
 
     global $loader;
 
-    if(_is_apc_cache_available()) {
+    if(droop7_is_apc_cache_available()) {
         require_once __DIR__ . '/vendor/symfony/class-loader/Symfony/Component/ClassLoader/ApcUniversalClassLoader.php';
         $loader = new \Symfony\Component\ClassLoader\ApcUniversalClassLoader('apc.prefix.');
     } else {
@@ -31,6 +29,80 @@ function droop7_init() {
     $loader->register();
 }
 
+/**
+ * droop7_start_service_container($configurations_path, $alias = 'services')
+ * Used for load and set global container
+ * @return \Symfony\Component\DependencyInjection\ContainerBuilder
+ */
+function droop7_start_service_container($configurations_path, $alias = 'services') {
+
+    $debug_mode     = variable_get('droop7_env');
+    $file           = __DIR__ . '/cache/container.php';
+
+    $container_config_cache = new \Symfony\Component\Config\ConfigCache($file, $debug_mode);
+
+    if(!$container_config_cache->isFresh()) {
+
+        $container_builder  = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+        $extension          = new \Droop7\Core\DI\CoreExtension($configurations_path);
+        $container_builder->registerExtension($extension);
+        $container_builder->loadFromExtension($extension->getAlias());
+        $container_builder->addCompilerPass(new \Droop7\Core\DI\CacheCompilerPass());
+
+        $container_builder->compile();
+
+        $dumper = new \Symfony\Component\DependencyInjection\Dumper\PhpDumper($container_builder);
+        file_put_contents($file, $dumper->dump(array('class' => 'CachedContainer')));
+    }
+
+    require_once $file;
+
+    global $container;
+    $container = new CachedContainer();
+}
+
+/**
+ * droop7_is_apc_cache_available()
+ * Is apc cache available for our environment
+ * @return bool
+ */
+function droop7_is_apc_cache_available() {
+
+    if(extension_loaded('apc') && ini_get('apc.enabled')) {
+        return !variable_get('droop7_env');
+    }
+
+    return false;
+}
+
+/**
+ * droop7_get_service($key)
+ * Load class instance from the container with dependencies
+ * @param $key
+ * @return mixed|object
+ */
+function droop7_get_service($key) {
+
+    global $container;
+
+    if(droop7_is_apc_cache_available()) {
+        $service = $container->get('core.cache')->getCachableServiceByID($key);
+        if($service) {
+            apc_add($key, $service);
+            return apc_fetch($key);
+        }
+    }
+
+    return $container->get($key);
+}
+
+/**
+ * droop7_get_block_view($delta, $extension)
+ * hook_theme handler for each builder
+ * @param $delta
+ * @param $extension
+ * @return mixed
+ */
 function droop7_get_block_view($delta, $extension) {
 
     global $container;
@@ -48,6 +120,12 @@ function droop7_get_block_view($delta, $extension) {
 
 }
 
+/**
+ * droop7_update_blocks(&$blocks, $theme)
+ * hook_block_info_alter handler for each builder
+ * @param $blocks
+ * @param $theme
+ */
 function droop7_update_blocks(&$blocks, $theme) {
 
     global $container;
@@ -55,9 +133,29 @@ function droop7_update_blocks(&$blocks, $theme) {
     $service_ids = $container->getServiceIds();
     foreach($service_ids as $service_id) {
         if(strpos($service_id, '_builder') !== FALSE) {
-            $builder = _get_service($service_id);
+            $builder = droop7_get_service($service_id);
             $builder->alterBuildBlocks($blocks, $theme);
         }
+    }
+}
+
+/**
+ * droop7_preprocess_node(&$variables)
+ * theme_preprocess_node handler
+ * @param $variables
+ */
+function droop7_preprocess_node(&$variables) {
+
+    global $container;
+
+    $node   = $variables['node'];
+    $config = $container->getParameter('config');
+
+    if(isset($config['processing'][$node->type])) {
+        $Class          = trim($config['processing'][$node->type]);
+        $processClass   = new $Class();
+        // TODO : Implements op code cache
+        $processClass->preProcessNode($node);
     }
 }
 

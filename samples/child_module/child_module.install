@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * Implements hook_install()
+ */
+function asstsas_core_install() {}
+
+/**
+ * Implements hook_uninstall()
+ */
+function asstsas_core_uninstall() {}
+?>

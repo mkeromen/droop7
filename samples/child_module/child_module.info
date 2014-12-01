@@ -1,0 +1,5 @@
+name        = "Child module"
+description = "Child module extends droop7"
+core        = 7.x
+
+dependencies[] = droop7

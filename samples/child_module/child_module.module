@@ -1,0 +1,108 @@
+<?php
+define('EXTENSION_ALIAS', 'services');
+
+module_load_include('php', 'child_module', 'app/routing/routes');
+
+/**
+ * Implements hook_init()
+ */
+function child_module_core_init() {
+
+    global $loader;
+    $loader->registerNamespaces(array(
+        'Test'      => __DIR__ . '/src'
+    ));
+
+    $configurations_path = dirname(__FILE__) . '/app/config';
+    droop7_start_service_container($configurations_path, EXTENSION_ALIAS);
+}
+
+/**
+ * Implements hook_block_info()
+ * @return mixed
+ */
+function child_module_block_info() {
+
+    $blockAssembler = new Droop7\Core\Processing\BlockAssembler();
+    return $blockAssembler
+                    ->add(droop7_get_service('services.test_builder'))
+                    ->result();
+
+}
+
+
+/**
+ * Implements hook_block_info_alter()
+ * @param $blocks
+ * @param $theme
+ *
+ */
+function child_module_block_info_alter(&$blocks, $theme, $code_blocks) {
+
+    droop7_update_blocks($blocks, $theme);
+
+}
+
+/**
+ * Implements hook_block_view()
+ * @param string $delta
+ * @return array
+ */
+function child_module_block_view($delta = '') {
+
+    return droop7_get_block_view($delta, EXTENSION_ALIAS);
+
+}
+
+
+/**
+ * Implements hook_theme()
+ * @param $existing
+ * @param $type
+ * @param $theme
+ * @param $path
+ * @return array
+ */
+function child_module_theme() {
+
+    $themeAssembler = new \Droop7\Core\Processing\ThemeAssembler();
+    return $themeAssembler
+                ->add(droop7_get_service('services.test_builder'))
+                ->result();
+}
+
+/**
+ * Implements hook_menu()
+ * @return mixed
+ */
+function child_module_menu() {
+
+    $routeAssembler = new \Droop7\Core\Processing\RouteAssembler();
+    return $routeAssembler
+                ->add(droop7_get_service('services.test_builder'))
+                ->result();
+}
+
+/**
+ * Implements template_preprocess_html
+ * @param $variables
+ */
+/*function mytheme_preprocess_html(&$variables) { }
+
+/**
+ * Implements template_preprocess_page()
+ * @param $variables
+ */
+//function mytheme_preprocess_page(&$variables) { }
+
+
+/**
+ * Implements template_preprocess_node()
+ */
+function mytheme_preprocess_node(&$variables) {
+
+    droop7_preprocess_node($variables['node']);
+
+}
+
+?>

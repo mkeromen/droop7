@@ -1,4 +1,3 @@
-name = "Droop 7"
-description = "Organize your development with Drupal 7"
-core = 7.x
-package = "Absolunet"
+name        = "Droop 7"
+description = "Organize your Drupal 7 development with OOP"
+core        = 7.x
