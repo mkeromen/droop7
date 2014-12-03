@@ -1,7 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Droop7 package.
+ */
+
 namespace Droop7\Core\Processing;
 
+/**
+ * Assembler is an abstract class to merge items of a builder.
+ * @author Matthieu Keromen
+ */
 abstract class Assembler
 {
     private $itemsOfbuilder;
@@ -20,7 +28,7 @@ abstract class Assembler
     /**
      * @return array
      */
-    public function result()
+    final public function result()
     {
         return $this->itemsOfbuilder;
     }

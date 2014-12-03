@@ -1,5 +1,9 @@
 <?php
 
+/*
+ * This file is part of the Droop7 package.
+ */
+
 namespace Droop7\Core\DI;
 
 use Symfony\Component\Config\FileLocator;
@@ -7,13 +11,21 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
+/**
+ * CoreExtension provides an interface to load container configuration.
+ * @author Matthieu Keromen
+ */
 class CoreExtension implements ExtensionInterface {
 
     private $servicePath;
-
     private $alias;
 
 
+    /**
+     * Constructor
+     * @param $servicePath
+     * @param string $alias
+     */
     public function __construct($servicePath, $alias = 'services')
     {
         $this->servicePath  = $servicePath;

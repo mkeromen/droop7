@@ -1,12 +1,23 @@
 <?php
 
+/*
+ * This file is part of the Droop7 package.
+ */
+
 namespace Droop7\Core;
 
-
+/**
+ * EntityRendable can be used as wrapper to render entity_view results.
+ * @author Matthieu Keromen
+ */
 class EntityRendable {
 
     private $entity;
 
+    /**
+     * Constructor.
+     * @param $entity
+     */
     public function __construct($entity) {
 
         $this->entity = $entity;
