@@ -148,7 +148,7 @@ function droop7_preprocess_node(&$variables) {
 
     global $container;
 
-    $node   = $variables['node'];
+    $node   = $variables->node;
     $config = $container->getParameter('config');
 
     if(isset($config['processing'][$node->type])) {
