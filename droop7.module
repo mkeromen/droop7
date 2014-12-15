@@ -108,7 +108,7 @@ function droop7_get_block_view($delta, $extension) {
     global $container;
 
     $exploded_delta = explode('_', $delta);
-    $container_key  = sprintf('%s.%s_builder', $extension, $exploded_delta[1]);
+    $container_key  = sprintf('%s.%s_feature', $extension, $exploded_delta[1]);
 
     $service_ids    = $container->getServiceIds();
     $builder_key    = array_search($container_key, $service_ids);
@@ -132,7 +132,7 @@ function droop7_update_blocks(&$blocks, $theme) {
 
     $service_ids = $container->getServiceIds();
     foreach($service_ids as $service_id) {
-        if(strpos($service_id, '_builder') !== FALSE) {
+        if(strpos($service_id, '_feature') !== FALSE) {
             $builder = droop7_get_service($service_id);
             $builder->alterBuildBlocks($blocks, $theme);
         }
