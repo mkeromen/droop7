@@ -107,7 +107,7 @@ function droop7_get_block_view($delta, $extension) {
 
     global $container;
 
-    $exploded_delta = explode('_', $delta);
+    $exploded_delta = explode('__', $delta);
     $container_key  = sprintf('%s.%s_feature', $extension, $exploded_delta[1]);
 
     $service_ids    = $container->getServiceIds();
