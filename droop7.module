@@ -108,16 +108,17 @@ function droop7_get_block_view($delta, $extension) {
     global $container;
 
     $exploded_delta = explode('__', $delta);
-    $container_key  = sprintf('%s.%s_feature', $extension, $exploded_delta[1]);
+    if(isset($exploded_delta[1])){
+        $container_key  = sprintf('%s.%s_feature', $extension, $exploded_delta[1]);
 
-    $service_ids    = $container->getServiceIds();
-    $builder_key    = array_search($container_key, $service_ids);
+        $service_ids    = $container->getServiceIds();
+        $builder_key    = array_search($container_key, $service_ids);
 
-    if($builder_key !== FALSE) {
-        $service_builder = $service_ids[$builder_key];
-        return $container->get($service_builder)->buildBlockViews($delta);
+        if($builder_key !== FALSE) {
+            $service_builder = $service_ids[$builder_key];
+            return $container->get($service_builder)->buildBlockViews($delta);
+        }
     }
-
 }
 
 /**
@@ -140,6 +141,7 @@ function droop7_update_blocks(&$blocks, $theme) {
 }
 
 /**
+/**
  * droop7_preprocess_node(&$variables)
  * theme_preprocess_node handler
  * @param $variables
@@ -148,10 +150,10 @@ function droop7_preprocess_node(&$variables) {
 
     global $container;
 
-    $node   = $variables->node;
+    $node   = $variables;
     $config = $container->getParameter('config');
 
-    if(isset($config['processing'][$node->type])) {
+    if(isset($node->type) && isset($config['processing'][$node->type])) {
         $Class          = trim($config['processing'][$node->type]);
         $processClass   = new $Class();
         // TODO : Implements op code cache
