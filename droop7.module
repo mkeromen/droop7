@@ -141,6 +141,7 @@ function droop7_update_blocks(&$blocks, $theme) {
 }
 
 /**
+/**
  * droop7_preprocess_node(&$variables)
  * theme_preprocess_node handler
  * @param $variables
@@ -149,10 +150,10 @@ function droop7_preprocess_node(&$variables) {
 
     global $container;
 
-    $node   = $variables->node;
+    $node   = $variables;
     $config = $container->getParameter('config');
 
-    if(isset($config['processing'][$node->type])) {
+    if(isset($node->type) && isset($config['processing'][$node->type])) {
         $Class          = trim($config['processing'][$node->type]);
         $processClass   = new $Class();
         // TODO : Implements op code cache
