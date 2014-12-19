@@ -22,4 +22,5 @@ interface Feature {
 
     function buildRoutes();
 
+    function buildPermissions();
 }

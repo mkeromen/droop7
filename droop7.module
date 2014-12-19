@@ -84,6 +84,7 @@ function droop7_is_apc_cache_available() {
 function droop7_get_service($key) {
 
     global $container;
+    if(!$container) return new \Droop7\Core\Feature\NullFeature();
 
     if(droop7_is_apc_cache_available()) {
         $service = $container->get('core.cache')->getCachableServiceByID($key);
@@ -106,6 +107,7 @@ function droop7_get_service($key) {
 function droop7_get_block_view($delta, $extension) {
 
     global $container;
+    if(!$container) return array();
 
     $exploded_delta = explode('__', $delta);
     if(isset($exploded_delta[1])){
@@ -130,6 +132,7 @@ function droop7_get_block_view($delta, $extension) {
 function droop7_update_blocks(&$blocks, $theme) {
 
     global $container;
+    if(!$container) return;
 
     $service_ids = $container->getServiceIds();
     foreach($service_ids as $service_id) {
@@ -149,6 +152,7 @@ function droop7_update_blocks(&$blocks, $theme) {
 function droop7_preprocess_node(&$node) {
 
     global $container;
+    if(!$container) return;
 
     $config = $container->getParameter('config');
 
