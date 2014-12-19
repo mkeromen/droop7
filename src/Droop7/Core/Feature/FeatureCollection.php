@@ -53,6 +53,14 @@ class FeatureCollection
         return $this->walkCollection('buildRoutes');
     }
 
+    /**
+     * @return array
+     */
+    public function mergePermissions()
+    {
+        return $this->walkCollection('buildPermissions');
+    }
+
     private function walkCollection($method)
     {
         $items = array();

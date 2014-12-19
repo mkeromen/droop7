@@ -146,11 +146,10 @@ function droop7_update_blocks(&$blocks, $theme) {
  * theme_preprocess_node handler
  * @param $variables
  */
-function droop7_preprocess_node(&$variables) {
+function droop7_preprocess_node(&$node) {
 
     global $container;
 
-    $node   = $variables;
     $config = $container->getParameter('config');
 
     if(isset($node->type) && isset($config['processing'][$node->type])) {
